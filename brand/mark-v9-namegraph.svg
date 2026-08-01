@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <g stroke="#1c1f25" stroke-opacity="0.35" stroke-width="1.4"><line x1="32" y1="20" x2="8" y2="44"/><line x1="32" y1="20" x2="20" y2="44"/><line x1="32" y1="20" x2="32" y2="44"/><line x1="32" y1="20" x2="44" y2="44"/><line x1="32" y1="20" x2="56" y2="44"/></g>
+  <rect x="14" y="4" width="36" height="16" rx="8" fill="#1c1f25"/>
+  <text x="32" y="15.2" text-anchor="middle" font-family="ui-monospace, Menlo, monospace"
+    font-size="8.5" font-weight="700" letter-spacing="0.5" fill="#f5f4f0">reason</text>
+  <circle cx="8" cy="50" r="6.6" fill="#2e7d5b"/><text x="8" y="53.6" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="9.5" font-weight="700" fill="#f5f4f0">s</text><circle cx="20" cy="50" r="6.6" fill="#1c1f25"/><text x="20" y="53.6" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="9.5" font-weight="700" fill="#f5f4f0">m</text><circle cx="32" cy="50" r="6.6" fill="#1c1f25"/><text x="32" y="53.6" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="9.5" font-weight="700" fill="#f5f4f0">i</text><circle cx="44" cy="50" r="6.6" fill="#1c1f25"/><text x="44" y="53.6" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="9.5" font-weight="700" fill="#f5f4f0">t</text><circle cx="56" cy="50" r="6.6" fill="#1c1f25"/><text x="56" y="53.6" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="9.5" font-weight="700" fill="#f5f4f0">h</text>
+  <rect x="16.5" y="50.6" width="44" height="3.6" rx="1.2" fill="#b71824" transform="rotate(-2 38 50)"/>
+</svg>
