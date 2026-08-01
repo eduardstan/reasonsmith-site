@@ -1,0 +1,45 @@
+name: Sync conformance dossier
+
+# Keeps report.html in step with the dossier generated in eduardstan/reasonsmith.
+# The canonical file is docs/report.html after PR #34 merges, docs/index.html before.
+# Vercel auto-deploys on every push to main, so a sync commit is also a publish.
+
+on:
+  schedule:
+    - cron: "17 * * * *" # hourly at :17
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch dossier from reasonsmith main
+        run: |
+          set -e
+          if curl -fsSL https://raw.githubusercontent.com/eduardstan/reasonsmith/main/docs/report.html -o report.html.new; then
+            :
+          else
+            curl -fsSL https://raw.githubusercontent.com/eduardstan/reasonsmith/main/docs/index.html -o report.html.new
+          fi
+          if cmp -s report.html.new report.html; then
+            echo "unchanged"
+            rm report.html.new
+          else
+            mv report.html.new report.html
+            echo "changed=true" >> "$GITHUB_ENV"
+          fi
+
+      - name: Commit and push if changed
+        if: env.changed == 'true'
+        run: |
+          git config user.name "reasonsmith-site bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add report.html
+          git commit -m "chore: sync dossier from eduardstan/reasonsmith@main"
+          git push
