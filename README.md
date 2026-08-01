@@ -12,3 +12,12 @@ conformance dossier (`report.html`). Deploys to Vercel.
   no build step: the site is plain static files.
 
 Deploy: `vercel --prod` (project linked to Vercel account `sandrohub013`).
+
+## Brand
+
+- **Logomark** (`assets/mark.svg`): the proof graph of the demo case — five reason nodes
+  under the decision node, four struck by the deletion bar, one surviving (green).
+  Favicon (`assets/favicon.svg`) is the simplified three-node version for small sizes.
+- **Palette**: paper `oklch(96.6% 0.005 95)`, ink `oklch(24% 0.012 260)`,
+  deletion red `oklch(50% 0.19 25)` (one accent, one meaning), ok green `oklch(44% 0.11 155)`.
+- **Type**: Newsreader (self-hosted variable) for display/body, system mono for data/labels.
