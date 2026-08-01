@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reasonsmith Conformance Report - CreditScoringPipeline</title>
+  <style>
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      /* ponytail: serif di sistema, non Newsreader come la landing — il report resta
+         self-contained (un woff2 inline costerebbe ~130KB per ogni report CLI).
+         Upgrade path: subset Newsreader + data-URI se l'identita' lo richiede. */
+      --font-serif: Georgia, "Times New Roman", serif;
+
+      /* Dossier palette: tinted neutrals in oklch, one accent (deletion red), color by role */
+      --paper: oklch(96.6% 0.005 95);
+      --surface: oklch(99.2% 0.003 95);
+      --ink: oklch(24% 0.012 260);
+      --ink-muted: oklch(45% 0.012 260);
+      --ink-faint: oklch(56% 0.01 260);
+      --line: oklch(88% 0.007 260);
+      --line-strong: oklch(72% 0.01 260);
+      --neutral-soft: oklch(95.5% 0.005 260);
+
+      --accent: oklch(50% 0.19 25);
+      --accent-deep: oklch(38% 0.14 25);
+      --accent-soft: oklch(94.5% 0.025 25);
+      --accent-line: oklch(80% 0.07 25);
+
+      --ok: oklch(44% 0.11 155);
+      --ok-soft: oklch(94.5% 0.03 155);
+      --ok-line: oklch(82% 0.06 155);
+
+      --warn: oklch(45% 0.1 75);
+      --warn-soft: oklch(95.5% 0.03 90);
+      --warn-line: oklch(84% 0.06 90);
+
+      /* Fluid type, ratio 1.25 */
+      --step--1: clamp(0.80rem, 0.77rem + 0.15vw, 0.90rem);
+      --step-0: clamp(1.00rem, 0.95rem + 0.25vw, 1.13rem);
+      --step-1: clamp(1.25rem, 1.15rem + 0.5vw, 1.55rem);
+      --step-2: clamp(1.55rem, 1.35rem + 1vw, 2.10rem);
+      --display: clamp(2.2rem, 1.5rem + 3.4vw, 3.6rem);
+
+      --space-2xs: 0.5rem;
+      --space-xs: 0.75rem;
+      --space-s: 1rem;
+      --space-m: 1.5rem;
+      --space-l: 2.5rem;
+
+      --dur-fast: 0.18s;
+      --dur-base: 0.4s;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--paper);
+      color: var(--ink);
+      line-height: 1.6;
+      font-size: var(--step-0);
+      padding: var(--space-l) var(--space-s);
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      z-index: 10;
+      background: var(--ink);
+      color: var(--surface);
+      font-family: var(--font-mono);
+      font-size: var(--step--1);
+      padding: var(--space-2xs) var(--space-s);
+    }
+    .skip-link:focus { left: var(--space-s); top: var(--space-s); }
+
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      overflow: hidden;
+    }
+
+    .report-header {
+      background: var(--ink);
+      color: var(--surface);
+      padding: var(--space-l);
+      border-bottom: 4px solid var(--accent);
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-s);
+    }
+    .header-corner {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: oklch(72% 0.012 260);
+      white-space: nowrap;
+    }
+    .header-corner a { color: oklch(80% 0.06 25); text-decoration: none; }
+    .header-corner a:hover { text-decoration: underline; }
+    .dossier-foot {
+      margin: 0 var(--space-l) var(--space-m);
+      padding-top: var(--space-s);
+      border-top: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--ink-faint);
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-s);
+      flex-wrap: wrap;
+    }
+    .dossier-foot a { color: var(--accent-deep); text-decoration: none; }
+    .dossier-foot a:hover { text-decoration: underline; }
+    .brand-title {
+      font-family: var(--font-mono);
+      font-size: var(--step--1);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: oklch(80% 0.06 25);
+      margin-bottom: var(--space-2xs);
+    }
+    .main-title {
+      font-family: var(--font-serif);
+      font-size: var(--display);
+      font-weight: 600;
+      line-height: 1.0;
+      letter-spacing: -0.025em;
+      text-wrap: balance;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-m);
+      margin-top: var(--space-l);
+      padding-top: var(--space-m);
+      border-top: 1px solid oklch(42% 0.012 260);
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 0.15rem; }
+    .meta-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: oklch(72% 0.012 260);
+    }
+    .meta-value {
+      font-size: var(--step-0);
+      font-weight: 600;
+      color: var(--surface);
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .headline-banner {
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-line);
+      border-left: 4px solid var(--accent);
+      padding: var(--space-m) var(--space-l);
+      margin: var(--space-l);
+      border-radius: var(--radius);
+    }
+    .headline-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-deep);
+      margin-bottom: var(--space-2xs);
+    }
+    .headline-text {
+      font-family: var(--font-serif);
+      font-size: var(--step-2);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      color: var(--accent-deep);
+      max-width: 65ch;
+      text-wrap: pretty;
+    }
+    .provenance-bar {
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      margin-top: var(--space-xs);
+      padding-top: var(--space-xs);
+      border-top: 1px dashed var(--accent-line);
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dashboard-section {
+      padding: 0 var(--space-l) var(--space-l) var(--space-l);
+    }
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-m);
+    }
+    @media (max-width: 768px) {
+      .split-grid { grid-template-columns: 1fr; }
+    }
+    .split-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: var(--space-m);
+      background: var(--surface);
+    }
+    .split-card-header {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: var(--space-xs);
+      padding-bottom: var(--space-2xs);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      color: var(--ink-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2xs);
+    }
+    .stat-pill {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .text-muted { color: var(--ink-faint); font-size: var(--step--1); }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: var(--step-2);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      padding: var(--space-m) var(--space-l) var(--space-xs);
+      border-top: 1px solid var(--line);
+      color: var(--ink);
+      text-wrap: balance;
+    }
+    .req-list {
+      padding: var(--space-xs) var(--space-l) var(--space-l);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-m);
+    }
+
+    .req-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .req-card.verdict-violated {
+      border: 1px solid var(--accent-line);
+      border-left: 4px solid var(--accent);
+      background: var(--surface);
+    }
+    .req-card.verdict-unattainable {
+      border: 1px dashed var(--warn-line);
+      border-left: 4px dashed var(--warn);
+      background: var(--surface);
+    }
+    .req-card.verdict-satisfied {
+      border-left: 4px solid var(--ok);
+      background: var(--surface);
+    }
+
+    .req-card-header {
+      padding: var(--space-s) var(--space-m);
+      background: var(--neutral-soft);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-s);
+      flex-wrap: wrap;
+    }
+    .req-title-group { flex: 1; min-width: 16rem; }
+    .req-id {
+      font-size: var(--step-0);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .req-clause {
+      font-size: var(--step--1);
+      color: var(--ink-muted);
+      margin-left: var(--space-2xs);
+    }
+    .badge-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2xs);
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+    .badge-binding { background: var(--ink); color: var(--surface); }
+    .badge-interpretive {
+      background: var(--surface); color: var(--ink-muted); border: 1px solid var(--line-strong);
+    }
+    .badge-scope {
+      background: var(--neutral-soft); color: var(--ink-muted); border: 1px solid var(--line);
+    }
+
+    .verdict-satisfied {
+      background: var(--ok-soft);
+      color: var(--ok);
+      border: 1px solid var(--ok-line);
+    }
+    .verdict-violated {
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      border: 1px solid var(--accent-line);
+    }
+    .verdict-unattainable {
+      background: var(--warn-soft);
+      color: var(--warn);
+      border: 1px dashed var(--warn-line);
+    }
+    .verdict-inconclusive {
+      background: var(--neutral-soft);
+      color: var(--ink-muted);
+      border: 1px solid var(--line);
+    }
+    .verdict-not-applicable {
+      background: var(--surface);
+      color: var(--ink-faint);
+      border: 1px solid var(--line);
+    }
+
+    .lattice-container {
+      padding: var(--space-xs) var(--space-m);
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: var(--space-s);
+      flex-wrap: wrap;
+    }
+    .lattice-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-faint);
+      white-space: nowrap;
+    }
+    .lattice-track {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+    }
+    .lattice-step {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      color: var(--ink-faint);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      font-variant-numeric: tabular-nums;
+    }
+    .lattice-step.active-proved {
+      background: var(--ink); color: var(--surface); border-color: var(--ink); font-weight: 700;
+    }
+    .lattice-step.active-probed {
+      background: var(--ok); color: var(--surface); border-color: var(--ok); font-weight: 700;
+    }
+    .lattice-step.active-observed {
+      background: var(--ok); color: var(--surface); border-color: var(--ok); font-weight: 700;
+    }
+    .lattice-step.active-unattainable {
+      background: var(--warn); color: var(--surface); border-color: var(--warn);
+      font-weight: 700; border-style: dashed;
+    }
+    .lattice-step.passed {
+      background: var(--neutral-soft); color: var(--ink-muted); border-color: var(--line-strong);
+    }
+    .lattice-arrow { color: var(--line-strong); font-size: 0.72rem; }
+
+    .req-card-body { padding: var(--space-m); }
+    .signal-list { margin-bottom: var(--space-xs); font-size: var(--step--1); }
+    .signal-tag {
+      font-family: var(--font-mono);
+      background: var(--neutral-soft);
+      color: var(--ink-muted);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      font-size: 0.78rem;
+      display: inline-block;
+      margin: 0.1rem;
+    }
+    .signal-tag.missing {
+      background: var(--warn-soft); color: var(--warn); border-color: var(--warn-line);
+      font-weight: 600;
+    }
+    .signal-tag.absent {
+      background: var(--accent-soft); color: var(--accent-deep); border-color: var(--accent-line);
+      font-weight: 600;
+    }
+
+    .evidence-summary {
+      font-size: var(--step--1);
+      color: var(--ink-muted);
+      margin-top: var(--space-2xs);
+      line-height: 1.6;
+      max-width: 75ch;
+      text-wrap: pretty;
+    }
+    .callout-box {
+      margin-top: var(--space-s);
+      padding: var(--space-s);
+      border-radius: var(--radius);
+      font-size: var(--step--1);
+    }
+    .callout-unattainable {
+      background: var(--warn-soft); border: 1px dashed var(--warn-line); color: var(--warn);
+    }
+    .callout-violated {
+      background: var(--accent-soft); border: 1px solid var(--accent-line);
+      color: var(--accent-deep);
+    }
+    .callout-note { font-size: 0.78rem; margin-top: var(--space-2xs); font-style: italic; }
+
+    .witness-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-xs);
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+    .witness-table th, .witness-table td {
+      border: 1px solid var(--accent-line);
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    .witness-table th {
+      background: var(--surface);
+      color: var(--accent-deep);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.72rem;
+    }
+    .witness-table tr:nth-child(even) { background: var(--surface); }
+
+    .limits-card {
+      margin: var(--space-l);
+      margin-top: 0;
+      padding: var(--space-m);
+      background: var(--neutral-soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .limits-header {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-muted);
+      margin-bottom: var(--space-2xs);
+    }
+    .limits-text {
+      font-size: var(--step--1);
+      color: var(--ink-muted);
+      line-height: 1.7;
+      max-width: 85ch;
+      text-wrap: pretty;
+    }
+
+    .reveal { opacity: 0; transform: translateY(16px); }
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+      transition: opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    @media print {
+      body { background: #ffffff; padding: 0; }
+      .container { border: none; max-width: 100%; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .report-header {
+        background: oklch(24% 0.012 260) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .req-card { break-inside: avoid; border: 1px solid oklch(30% 0.012 260) !important; }
+      .req-card.verdict-violated { border-left: 4px solid oklch(50% 0.19 25) !important; }
+      .req-card.verdict-unattainable { border-left: 4px dashed oklch(45% 0.1 75) !important; }
+      .witness-table th, .witness-table td { border-color: oklch(50% 0.07 25) !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#findings">Skip to requirement findings</a>
+  <div class="container" id="top">
+    <header class="report-header">
+      <div class="header-top">
+        <div>
+          <div class="brand-title">reasonsmith audit engine</div>
+          <h1 class="main-title">Conformance Report</h1>
+        </div>
+        <span class="header-corner">
+          <a href="index.html">&larr; landing</a> &middot; audit dossier
+        </span>
+      </div>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">System under test</span>
+          <span class="meta-value">CreditScoringPipeline</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Declared Scope</span>
+          <span class="meta-value">high-risk</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Regulation Pack</span>
+          <span class="meta-value">table7</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="headline-banner">
+      <div class="headline-title">Executive Headline Summary</div>
+      <div class="headline-text">6 requirements · 4 binding: 3 observed, 1 violated · 2 interpretive: 2 unattainable</div>
+      <div class="provenance-bar"><strong>Report Provenance:</strong> Generated without an identified source commit. Command: <code>python docs/build_example.py</code></div>
+    </div>
+
+    
+    <style>
+
+  .key-finding-section {
+    margin: var(--space-l);
+    margin-top: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .key-finding-banner {
+    background: var(--ink);
+    color: var(--surface);
+    padding: var(--space-m) var(--space-l);
+    border-bottom: 4px solid var(--accent);
+  }
+  .kf-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: var(--surface);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    margin-bottom: var(--space-2xs);
+  }
+  .kf-title {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .kf-subtitle {
+    font-size: var(--step--1);
+    color: oklch(80% 0.01 260);
+    margin-top: var(--space-2xs);
+    max-width: 70ch;
+    text-wrap: pretty;
+  }
+  .key-finding-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-m);
+    padding: var(--space-m);
+    background: var(--neutral-soft);
+  }
+  @media (max-width: 768px) {
+    .key-finding-grid { grid-template-columns: 1fr; }
+  }
+  .kf-card {
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .kf-card-record {
+    border-top: 4px solid var(--ok);
+  }
+  .kf-card-cert {
+    border-top: 4px solid var(--accent);
+  }
+  .kf-card-header {
+    padding: var(--space-xs) var(--space-s);
+    background: var(--neutral-soft);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .kf-card-title {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+  .kf-card-body {
+    padding: var(--space-s);
+    font-size: var(--step--1);
+    flex: 1;
+  }
+  .kf-meta-line {
+    margin-bottom: 0.35rem;
+    color: var(--ink-muted);
+  }
+  .kf-subhead {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    margin-top: var(--space-s);
+    margin-bottom: var(--space-2xs);
+    padding-top: var(--space-2xs);
+    border-top: 1px dashed var(--line);
+  }
+  .kf-field-list, .kf-reason-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .kf-field-list li {
+    margin-bottom: 0.35rem;
+    line-height: 1.5;
+    font-size: 0.8rem;
+  }
+  .check-icon {
+    color: var(--ok);
+    font-weight: 800;
+    margin-right: 0.25rem;
+  }
+  .kf-values-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    background: var(--surface);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--line);
+    margin: var(--space-2xs) 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .kf-gap {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .kf-reason-list li {
+    position: relative;
+    padding: 0.3rem 0.45rem;
+    border-radius: 4px;
+    margin-bottom: 0.3rem;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .reason-live {
+    background: var(--ok-soft);
+    border: 1px solid var(--ok-line);
+    color: var(--ok);
+  }
+  .reason-deleted {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+    color: var(--accent-deep);
+  }
+  .reason-deleted::after {
+    content: "";
+    position: absolute;
+    left: 0.3rem;
+    right: 0.3rem;
+    top: 50%;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  .reason-deleted.struck::after {
+    transform: scaleX(1);
+    transition: transform 0.45s var(--ease-snap);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reason-deleted::after { transform: scaleX(1); }
+    .reason-deleted.struck::after { transition: none; }
+  }
+  @media print {
+    .reason-deleted::after { transform: scaleX(1) !important; }
+  }
+  .reason-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.08rem 0.35rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .tag-live {
+    background: var(--ok);
+    color: var(--surface);
+  }
+  .tag-deleted {
+    background: var(--accent);
+    color: var(--surface);
+  }
+  .reason-score {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+  }
+
+    </style>
+    <section class="key-finding-section">
+      <div class="key-finding-banner">
+        <div class="kf-badge">KEY FINDING</div>
+        <h2 class="kf-title">Form Completeness Does Not Imply Reason Fidelity</h2>
+        <div class="kf-subtitle">
+          An evidence record can be marked <strong>COMPLETE</strong> while four of its five legally-owed reasons are missing due to proof truncation.
+        </div>
+      </div>
+      <div class="key-finding-grid">
+        <div class="kf-card kf-card-record">
+          <div class="kf-card-header">
+            <span class="kf-card-title">Evidence Record</span>
+            <span class="badge verdict-satisfied">
+              <span aria-hidden="true">✓</span> COMPLETE
+            </span>
+          </div>
+          <div class="kf-card-body">
+            <div class="kf-meta-line"><strong>Decision:</strong> <code>APP-1042</code></div>
+            <div class="kf-meta-line"><strong>Duty:</strong> Adverse action reasons in credit decisions</div>
+            <div class="kf-meta-line"><strong>Source:</strong> ECOA / Reg B (12 CFR 1002.9)</div>
+            <div class="kf-subhead">Minimal Evidence Retained (5 of 5 Table 7 fields):</div>
+            <ul class="kf-field-list">
+              <li><span class="check-icon">✓</span> <strong><code>stored_reasons_per_decision</code></strong>: C01 — Income insufficient for amount of credit requested</li>
+<li><span class="check-icon">✓</span> <strong><code>model_version</code></strong>: credit-scoring-2026.03.1 / rules cs-rules-2026.03</li>
+<li><span class="check-icon">✓</span> <strong><code>score_factors</code></strong>: C01 0.7656; C02 0.6972; C03 0.6320; C04 0.6004; C05 0.5112</li>
+<li><span class="check-icon">✓</span> <strong><code>audit_ids</code></strong>: AAN-2026-0731-1042 / trace-9f3c1b</li>
+<li><span class="check-icon">✓</span> <strong><code>retention_for_regulatory_lookback</code></strong>: 25 months from notice date, per lender policy</li>
+            </ul>
+          </div>
+        </div>
+        <div class="kf-card kf-card-cert">
+          <div class="kf-card-header">
+            <span class="kf-card-title">Reason-Deletion Certificate</span>
+            <span class="badge verdict-violated">
+              <span aria-hidden="true">✖</span> FAIL
+            </span>
+          </div>
+          <div class="kf-card-body">
+            <div class="kf-meta-line"><strong>Query:</strong> <code>adverse_action(APP-1042)</code></div>
+            <div class="kf-meta-line">
+              <strong>Engine:</strong> <code>reference:top-1-proofs</code> (distribution semantics)
+            </div>
+            <div class="kf-values-bar">
+              <span>Exact: <code>0.9914</code></span>
+              <span>Engine: <code>0.7656</code></span>
+              <span class="kf-gap">Gap: <code>-0.2258</code></span>
+            </div>
+            <div class="kf-subhead">
+              Reason Audit (5 found &middot;
+              <strong style="color: var(--accent)">4 deleted</strong>):
+            </div>
+            <ul class="kf-reason-list">
+              <li class="reason-live"><span class="reason-tag tag-live">[used]</span> <span>C01 — Income insufficient for amount of credit requested</span> <span class="reason-score">(score 0.7656)</span></li>
+<li class="reason-deleted"><span class="reason-tag tag-deleted">[DELETED]</span> <span>C02 — Length of time credit has been established is too short</span> <span class="reason-score">(score 0.6972)</span></li>
+<li class="reason-deleted"><span class="reason-tag tag-deleted">[DELETED]</span> <span>C03 — Delinquent past or present credit obligations</span> <span class="reason-score">(score 0.6320)</span></li>
+<li class="reason-deleted"><span class="reason-tag tag-deleted">[DELETED]</span> <span>C04 — Too many recent inquiries on credit bureau report</span> <span class="reason-score">(score 0.6004)</span></li>
+<li class="reason-deleted"><span class="reason-tag tag-deleted">[DELETED]</span> <span>C05 — Insufficient number of credit references provided</span> <span class="reason-score">(score 0.5112)</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="dashboard-section">
+      <div class="split-grid">
+        <div class="split-card">
+          <div class="split-card-header">
+            <span>Binding Duties</span>
+            <span>4 total</span>
+          </div>
+          <div class="pill-group">
+            <span class="stat-pill verdict-satisfied"><span aria-hidden="true">👁</span> 3 observed</span><span class="stat-pill verdict-violated"><span aria-hidden="true">✖</span> 1 violated</span>
+          </div>
+        </div>
+        <div class="split-card">
+          <div class="split-card-header">
+            <span>Interpretive Items</span>
+            <span>2 total</span>
+          </div>
+          <div class="pill-group">
+            <span class="stat-pill verdict-unattainable"><span aria-hidden="true">⊘</span> 2 unattainable</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title" id="findings">Requirement Findings</h2>
+    <main class="req-list">
+
+        <article class="req-card verdict-satisfied">
+          <header class="req-card-header">
+            <div class="req-title-group">
+              <span class="req-id">eu_ai_act_art13_transparency</span>
+              <span class="req-clause">(EU AI Act Art. 13)</span>
+            </div>
+            <div class="badge-group">
+              <span class="badge badge-binding">Binding</span>
+              <span class="badge badge-scope">Scope: high-risk</span>
+              <span class="badge verdict-satisfied"><span aria-hidden="true">✓</span> SATISFIED</span>
+            </div>
+          </header>
+          <div class="lattice-container">
+            <span class="lattice-label">Strength Lattice:</span>
+            <div class="lattice-track"><span class="lattice-step "><span aria-hidden="true">⊘</span> unattainable</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step active-observed"><span aria-hidden="true">👁</span> observed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🔍</span> probed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🏆</span> proved</span></div>
+          </div>
+          <div class="req-card-body">
+            <div class="signal-list">
+              <strong>Requires Signals:</strong> <span class="signal-tag">model_and_data_version_ids</span><span class="signal-tag">extraction_timestamp</span><span class="signal-tag">dataset_snapshot_hash</span><span class="signal-tag">fidelity_coverage_metrics</span><span class="signal-tag">explanation_scope</span><span class="signal-tag">linkage_from_decision_to_artifact</span>
+            </div>
+            <div class="evidence-summary">Observed over 3 decision(s): every required signal (model_and_data_version_ids, extraction_timestamp, dataset_snapshot_hash, fidelity_coverage_metrics, explanation_scope, linkage_from_decision_to_artifact) carries a value in every record. Holds on the trace supplied; nothing here extends the claim to decisions not in it.</div>
+            
+          </div>
+        </article>
+
+        <article class="req-card verdict-violated">
+          <header class="req-card-header">
+            <div class="req-title-group">
+              <span class="req-id">eu_ai_act_art12_record_keeping</span>
+              <span class="req-clause">(EU AI Act Art. 12)</span>
+            </div>
+            <div class="badge-group">
+              <span class="badge badge-binding">Binding</span>
+              <span class="badge badge-scope">Scope: high-risk</span>
+              <span class="badge verdict-violated"><span aria-hidden="true">✖</span> VIOLATED</span>
+            </div>
+          </header>
+          <div class="lattice-container">
+            <span class="lattice-label">Strength Lattice:</span>
+            <div class="lattice-track"><span class="lattice-step "><span aria-hidden="true">⊘</span> unattainable</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step active-observed"><span aria-hidden="true">👁</span> observed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🔍</span> probed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🏆</span> proved</span></div>
+          </div>
+          <div class="req-card-body">
+            <div class="signal-list">
+              <strong>Requires Signals:</strong> <span class="signal-tag">automatic_event_logs</span><span class="signal-tag">retention_schedule</span><span class="signal-tag">signer</span>
+            </div>
+            <div class="evidence-summary">Violated over 3 observed decision(s): the system declares it can emit these signals, but records carry no value for signer.</div>
+            <div class="callout-box callout-violated"><strong>VIOLATED IN TRACE — Required Signals Absent from Decision Log:</strong><br><span class="signal-tag absent">signer</span></div><div class="callout-box callout-violated"><strong>VIOLATED IN TRACE — Execution Counterexample Witness (all 1 offending record):</strong><table class="witness-table"><thead><tr><th>Trace Step</th><th>Decision Record Witness</th></tr></thead><tbody><tr><td>Step 1</td><td><code>artifact_logs_decision_record: {&#x27;id&#x27;: &#x27;APP-1043&#x27;, &#x27;result&#x27;: &#x27;adverse_action&#x27;}, artifact_logs_reason_explanation: C03 - Delinquent past or present credit obligations, artifact_logs_notification_latency_days: 21, artifact_logs_counteroffer_not_accepted: 0, provenance_model_version: credit-scoring-2026.03.1, provenance_constraint_set: [&#x27;cs-rules-2026.03&#x27;], provenance_active_exceptions: [], scope_statements_local_vs_global: local, scope_statements_explanation_scope: local, scope_statements_approximation_vs_guarantee: approximation, stability_signals_artifact_drift: 0.01, model_and_data_version_ids: credit-scoring-2026.03.1 / dataset cs-data-2026.03, extraction_timestamp: 2026-07-31T22:05:00Z, dataset_snapshot_hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, fidelity_coverage_metrics: fidelity: 0.9914, coverage: 1.0000, explanation_scope: local (per-applicant decision explanation), linkage_from_decision_to_artifact: AAN-2026-0731-1043 -&gt; cs-rules-2026.03, automatic_event_logs: event_id: EVT-1043-01, status: logged, level: info, retention_schedule: retention_period: 25 months, policy: ECOA 1002.9, per_decision_reason_string: C03 — Delinquent past or present credit obligations, feature_to_named_concept_mapping: delinquency_on_file -&gt; C03: Delinquent obligations, dpia_cross_reference: DPIA-2026-014 s.4.2 (automated credit scoring), stored_reasons_per_decision: C03 — Delinquent past or present credit obligations, model_version: credit-scoring-2026.03.1 / rules cs-rules-2026.03, score_factors: C03 0.8120; C01 0.7210, audit_ids: AAN-2026-0731-1043 / trace-9f3c1c, retention_for_regulatory_lookback: 25 months from notice date, per lender policy</code></td></tr></tbody></table></div>
+          </div>
+        </article>
+
+        <article class="req-card verdict-satisfied">
+          <header class="req-card-header">
+            <div class="req-title-group">
+              <span class="req-id">gdpr_art22_meaningful_information</span>
+              <span class="req-clause">(GDPR Art. 22 (and Rec. 71))</span>
+            </div>
+            <div class="badge-group">
+              <span class="badge badge-binding">Binding</span>
+              
+              <span class="badge verdict-satisfied"><span aria-hidden="true">✓</span> SATISFIED</span>
+            </div>
+          </header>
+          <div class="lattice-container">
+            <span class="lattice-label">Strength Lattice:</span>
+            <div class="lattice-track"><span class="lattice-step "><span aria-hidden="true">⊘</span> unattainable</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step active-observed"><span aria-hidden="true">👁</span> observed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🔍</span> probed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🏆</span> proved</span></div>
+          </div>
+          <div class="req-card-body">
+            <div class="signal-list">
+              <strong>Requires Signals:</strong> <span class="signal-tag">per_decision_reason_string</span><span class="signal-tag">feature_to_named_concept_mapping</span><span class="signal-tag">dpia_cross_reference</span>
+            </div>
+            <div class="evidence-summary">Observed over 3 decision(s): every required signal (per_decision_reason_string, feature_to_named_concept_mapping, dpia_cross_reference) carries a value in every record. Holds on the trace supplied; nothing here extends the claim to decisions not in it.</div>
+            
+          </div>
+        </article>
+
+        <article class="req-card verdict-satisfied">
+          <header class="req-card-header">
+            <div class="req-title-group">
+              <span class="req-id">ecoa_reg_b_adverse_action</span>
+              <span class="req-clause">(ECOA / Reg B 12 CFR 1002.9)</span>
+            </div>
+            <div class="badge-group">
+              <span class="badge badge-binding">Binding</span>
+              
+              <span class="badge verdict-satisfied"><span aria-hidden="true">✓</span> SATISFIED</span>
+            </div>
+          </header>
+          <div class="lattice-container">
+            <span class="lattice-label">Strength Lattice:</span>
+            <div class="lattice-track"><span class="lattice-step "><span aria-hidden="true">⊘</span> unattainable</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step active-observed"><span aria-hidden="true">👁</span> observed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🔍</span> probed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🏆</span> proved</span></div>
+          </div>
+          <div class="req-card-body">
+            <div class="signal-list">
+              <strong>Requires Signals:</strong> <span class="signal-tag">stored_reasons_per_decision</span><span class="signal-tag">model_version</span><span class="signal-tag">score_factors</span><span class="signal-tag">audit_ids</span><span class="signal-tag">retention_for_regulatory_lookback</span>
+            </div>
+            <div class="evidence-summary">Observed over 3 decision(s): every required signal (stored_reasons_per_decision, model_version, score_factors, audit_ids, retention_for_regulatory_lookback) carries a value in every record. Holds on the trace supplied; nothing here extends the claim to decisions not in it.</div>
+            
+          </div>
+        </article>
+
+        <article class="req-card verdict-unattainable">
+          <header class="req-card-header">
+            <div class="req-title-group">
+              <span class="req-id">fda_gmlp_samd</span>
+              <span class="req-clause">(FDA GMLP agency transparency guidance)</span>
+            </div>
+            <div class="badge-group">
+              <span class="badge badge-interpretive">Interpretive</span>
+              
+              <span class="badge verdict-unattainable"><span aria-hidden="true">⊘</span> UNATTAINABLE</span>
+            </div>
+          </header>
+          <div class="lattice-container">
+            <span class="lattice-label">Strength Lattice:</span>
+            <div class="lattice-track"><span class="lattice-step active-unattainable"><span aria-hidden="true">⊘</span> unattainable</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">👁</span> observed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🔍</span> probed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🏆</span> proved</span></div>
+          </div>
+          <div class="req-card-body">
+            <div class="signal-list">
+              <strong>Requires Signals:</strong> <span class="signal-tag">design_history_links</span><span class="signal-tag">verification_logs</span><span class="signal-tag">change_control</span>
+            </div>
+            <div class="evidence-summary">Unattainable on the evidence supplied: no record in the supplied decision trace carries a value for change_control, design_history_links, verification_logs, and the system declared no capabilities, so nothing here can discharge this requirement. Read from that trace alone; a longer trace could show the system emitting these signals.</div>
+            <div class="callout-box callout-unattainable"><strong>UNATTAINABLE AS BUILT — Missing Capability Signals:</strong><br><span class="signal-tag missing">change_control</span><span class="signal-tag missing">design_history_links</span><span class="signal-tag missing">verification_logs</span><div class="callout-note">The system declares no capability to emit these signals. No testing trace can satisfy this requirement.</div></div>
+          </div>
+        </article>
+
+        <article class="req-card verdict-unattainable">
+          <header class="req-card-header">
+            <div class="req-title-group">
+              <span class="req-id">nist_ai_rmf_risk_evidence</span>
+              <span class="req-clause">(NIST AI RMF 1.0)</span>
+            </div>
+            <div class="badge-group">
+              <span class="badge badge-interpretive">Interpretive</span>
+              
+              <span class="badge verdict-unattainable"><span aria-hidden="true">⊘</span> UNATTAINABLE</span>
+            </div>
+          </header>
+          <div class="lattice-container">
+            <span class="lattice-label">Strength Lattice:</span>
+            <div class="lattice-track"><span class="lattice-step active-unattainable"><span aria-hidden="true">⊘</span> unattainable</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">👁</span> observed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🔍</span> probed</span><span class="lattice-arrow">&rarr;</span><span class="lattice-step "><span aria-hidden="true">🏆</span> proved</span></div>
+          </div>
+          <div class="req-card-body">
+            <div class="signal-list">
+              <strong>Requires Signals:</strong> <span class="signal-tag">continuous_monitoring_logs</span><span class="signal-tag">metric_thresholds_and_alerts</span><span class="signal-tag">reviews_and_sign_offs</span><span class="signal-tag">incident_tickets</span>
+            </div>
+            <div class="evidence-summary">Unattainable on the evidence supplied: no record in the supplied decision trace carries a value for continuous_monitoring_logs, incident_tickets, metric_thresholds_and_alerts, reviews_and_sign_offs, and the system declared no capabilities, so nothing here can discharge this requirement. Read from that trace alone; a longer trace could show the system emitting these signals.</div>
+            <div class="callout-box callout-unattainable"><strong>UNATTAINABLE AS BUILT — Missing Capability Signals:</strong><br><span class="signal-tag missing">continuous_monitoring_logs</span><span class="signal-tag missing">incident_tickets</span><span class="signal-tag missing">metric_thresholds_and_alerts</span><span class="signal-tag missing">reviews_and_sign_offs</span><div class="callout-note">The system declares no capability to emit these signals. No testing trace can satisfy this requirement.</div></div>
+          </div>
+        </article>
+    </main>
+
+    <section class="limits-card">
+      <h3 class="limits-header">Limits of this report</h3>
+      <p class="limits-text">This report is not a compliance guarantee and is not legal advice. It assesses system capability information and trace evidence against formal specifications. Whether these findings discharge legal duties remains a determination this tool does not make and cannot make. A requirement reported without a strength was not evaluated or is not applicable, and no verdict on it should be read from this report. Recital and guidance items inform how statutory duties are interpreted but create no obligation of their own; interpretive requirements are evaluated and reported separately, and are never folded into the binding headline counts. A requirement reported not applicable was excluded either because no regulatory class was declared for the system at all, or because the class that was declared is not the one the requirement is limited to. This tool never infers that class, so an undeclared system is neither placed in scope nor cleared of the duty: read the declared scope line before reading a not-applicable result.</p>
+    </section>
+    <footer class="dossier-foot">
+      <span>reasonsmith &middot; audit-grade explanations</span>
+      <span><a href="index.html">landing</a> &middot; <a href="#top">top</a></span>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var deleted = document.querySelectorAll(".reason-deleted");
+      if (reduce || !("IntersectionObserver" in window)) {
+        deleted.forEach(function (li) { li.classList.add("struck"); });
+        return;
+      }
+      var blocks = document.querySelectorAll(
+        ".split-card, .req-card, .limits-card"
+      );
+      blocks.forEach(function (el) { el.classList.add("reveal"); });
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          en.target.classList.add("in");
+          io.unobserve(en.target);
+        });
+      }, { rootMargin: "0px 0px -10% 0px" });
+      blocks.forEach(function (el, i) {
+        el.style.transitionDelay = (i % 4) * 60 + "ms";
+        io.observe(el);
+      });
+      var audit = deleted.length ? deleted[0].parentNode : null;
+      if (audit) {
+        var rio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (!en.isIntersecting) return;
+            deleted.forEach(function (li, i) {
+              setTimeout(function () { li.classList.add("struck"); }, 350 + i * 200);
+            });
+            rio.unobserve(en.target);
+          });
+        }, { threshold: 0.35 });
+        rio.observe(audit);
+      }
+    })();
+  </script>
+</body>
+</html>

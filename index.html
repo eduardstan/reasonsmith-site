@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>reasonsmith — prove which legally-owed reasons a system deleted, and from whom</title>
+  <meta name="description" content="reasonsmith is an audit engine: it runs conformance checks against formal regulation packs and issues reason-deletion certificates with evidence-strength verdicts.">
+  <meta property="og:title" content="reasonsmith — audit-grade explanations">
+  <meta property="og:description" content="Prove which legally-owed reasons a system deleted, and from whom. 5 reasons found · 4 deleted — ECOA / Reg B.">
+  <meta property="og:image" content="assets/og.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/newsreader-normal.woff2" crossorigin>
+  <link rel="stylesheet" href="site/css/landing.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three.module.js",
+        "lenis": "./vendor/lenis.esm.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="gl" aria-hidden="true"></canvas>
+
+  <a class="skip-link" href="#case">Skip to content</a>
+
+  <div class="progress-rail" aria-hidden="true">
+    <span class="rail-label">APP-1042</span>
+    <span class="rail-track"><span class="rail-fill" id="rail-fill"></span></span>
+    <span class="rail-label">§</span>
+  </div>
+
+  <header class="site-head">
+    <span class="brand">reasonsmith <span class="brand-sub">audit engine</span></span>
+    <nav class="site-nav" aria-label="Sections">
+      <a href="#case">§1 Case</a>
+      <a href="#deletion">§2 Deletion</a>
+      <a href="#regulations">§3 Regulations</a>
+      <a href="#lattice">§4 Evidence</a>
+      <a href="report.html" class="nav-report">Report</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <p class="kicker">reasonsmith audit engine · research preview</p>
+      <h1 class="hero-title">Prove which legally&#8209;owed reasons a system deleted. <em>And from whom.</em></h1>
+      <div class="abstract">
+        <p class="abstract-label">Abstract</p>
+        <p>
+          reasonsmith runs conformance checks against formal regulation packs and issues
+          <strong>reason-deletion certificates</strong>: audit-grade evidence that an explanation
+          engine dropped reasons the law says a person is owed. Every claim carries a strength on an
+          explicit lattice &mdash; <span class="mono">observed &rarr; probed &rarr; proved</span> &mdash;
+          and nothing claims a strength it did not earn.
+        </p>
+      </div>
+      <p class="hero-hint mono" aria-hidden="true">scroll &mdash; the flight is the argument &darr;</p>
+    </section>
+
+    <section class="beat" id="case">
+      <div class="beat-inner">
+        <p class="beat-index mono">§1 — The case</p>
+        <h2>One credit decision.<br>Five reasons on file.</h2>
+        <p class="beat-copy">
+          Application <code>APP-1042</code>, adverse action. Under ECOA / Reg&nbsp;B (12&nbsp;CFR&nbsp;1002.9)
+          the applicant is owed the specific principal reasons. The scoring system computed five:
+          income, credit history length, delinquent obligations, recent inquiries, references.
+          The graph behind you is the proof structure of that decision.
+        </p>
+        <dl class="case-meta mono">
+          <div><dt>Decision</dt><dd>APP-1042</dd></div>
+          <div><dt>Duty</dt><dd>Adverse action reasons</dd></div>
+          <div><dt>Source</dt><dd>ECOA / Reg B · 12 CFR 1002.9</dd></div>
+          <div><dt>Model</dt><dd>credit-scoring-2026.03.1</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="beat pinned" id="deletion">
+      <div class="beat-inner">
+        <p class="beat-index mono">§2 — The deletion</p>
+        <h2>The engine kept one.<br><span class="accent">It deleted four.</span></h2>
+        <p class="beat-copy">
+          The explanation engine answers <code>adverse_action(APP-1042)</code> with a top&#8209;1 proof.
+          The applicant sees one reason. The certificate shows what the full proof contained &mdash;
+          and what was dropped on the way out.
+        </p>
+        <ul class="reason-audit mono" id="reason-audit">
+          <li class="ra-live"><span class="ra-tag">used</span> C01 — Income insufficient for amount of credit requested <span class="ra-score">0.7656</span></li>
+          <li class="ra-deleted"><span class="ra-tag">deleted</span> C02 — Length of time credit has been established is too short <span class="ra-score">0.6972</span></li>
+          <li class="ra-deleted"><span class="ra-tag">deleted</span> C03 — Delinquent past or present credit obligations <span class="ra-score">0.6320</span></li>
+          <li class="ra-deleted"><span class="ra-tag">deleted</span> C04 — Too many recent inquiries on credit bureau report <span class="ra-score">0.6004</span></li>
+          <li class="ra-deleted"><span class="ra-tag">deleted</span> C05 — Insufficient number of credit references provided <span class="ra-score">0.5112</span></li>
+        </ul>
+        <p class="values-bar mono">
+          <span>Exact <code>0.9914</code></span>
+          <span>Engine <code>0.7656</code></span>
+          <span class="gap">Gap <code>&minus;0.2258</code></span>
+        </p>
+      </div>
+    </section>
+
+    <section class="hscroll" id="regulations">
+      <div class="hscroll-head">
+        <p class="beat-index mono">§3 — The duties</p>
+        <h2>Six regulations, one engine.</h2>
+      </div>
+      <div class="track-wrap">
+        <div class="track" id="track">
+          <article class="panel">
+            <p class="panel-no mono">01</p>
+            <h3>ECOA / Reg B</h3>
+            <p class="panel-law mono">12 CFR 1002.9 · credit</p>
+            <p>Adverse action reasons. A dropped reason is a reason legally owed and withheld — the sharpest test of certificate value.</p>
+          </article>
+          <article class="panel">
+            <p class="panel-no mono">02</p>
+            <h3>GDPR Art. 22</h3>
+            <p class="panel-law mono">automated decisions · clinical</p>
+            <p>Meaningful information about the logic involved, owed to the data subject, in a triage setting.</p>
+          </article>
+          <article class="panel">
+            <p class="panel-no mono">03</p>
+            <h3>EU AI Act Art. 13</h3>
+            <p class="panel-law mono">transparency · deployers</p>
+            <p>Deployer information duties for high-risk systems: instructions, capabilities, limitations.</p>
+          </article>
+          <article class="panel">
+            <p class="panel-no mono">04</p>
+            <h3>EU AI Act Art. 12</h3>
+            <p class="panel-law mono">record-keeping · logs</p>
+            <p>Automatic event logs over the system's lifetime, retained for the regulatory lookback window.</p>
+          </article>
+          <article class="panel">
+            <p class="panel-no mono">05</p>
+            <h3>FDA GMLP</h3>
+            <p class="panel-law mono">SaMD · good machine learning practice</p>
+            <p>Design history, verification logs and change control for software as a medical device.</p>
+          </article>
+          <article class="panel">
+            <p class="panel-no mono">06</p>
+            <h3>NIST AI RMF 1.0</h3>
+            <p class="panel-law mono">continuous monitoring</p>
+            <p>Monitoring logs, thresholds, reviews and incident tickets as ongoing evidence, not one-off attestations.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="beat" id="lattice">
+      <div class="beat-inner">
+        <p class="beat-index mono">§4 — The evidence</p>
+        <h2>Nothing claims a strength<br>it did not earn.</h2>
+        <p class="beat-copy">
+          Every requirement verdict carries its position on the evidence lattice.
+          <span class="mono">unattainable</span> means the system as built cannot emit the signals at all;
+          <span class="mono">observed</span> means the trace carries them;
+          <span class="mono">probed</span> and <span class="mono">proved</span> mean the engines went further.
+          Zero verdicts combine to <em>inconclusive</em>, never to satisfied.
+        </p>
+        <div class="lattice-strip mono" aria-label="Evidence strength lattice">
+          <span class="ls-step ls-unattainable">unattainable</span><span class="ls-arrow">&rarr;</span>
+          <span class="ls-step ls-observed">observed</span><span class="ls-arrow">&rarr;</span>
+          <span class="ls-step ls-probed">probed</span><span class="ls-arrow">&rarr;</span>
+          <span class="ls-step ls-proved">proved</span>
+        </div>
+        <p class="report-cta">
+          <a class="report-link" href="report.html">
+            Read the full conformance dossier
+            <span class="mono">report.html &rarr;</span>
+          </a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <div class="colophon-grid">
+      <div>
+        <p class="foot-label mono">Limits</p>
+        <p class="foot-copy">
+          This site is a demonstration on frozen synthetic data: realistic structure, no real personal
+          data. It is not a compliance guarantee and not legal advice; whether findings discharge legal
+          duties is a determination the tool does not make.
+        </p>
+      </div>
+      <div>
+        <p class="foot-label mono">Provenance</p>
+        <p class="foot-copy mono">
+          Case APP-1042 · engine reference:top-1-proofs<br>
+          trace-9f3c1b · model credit-scoring-2026.03.1
+        </p>
+      </div>
+      <div>
+        <p class="foot-label mono">Source</p>
+        <p class="foot-copy">
+          <a href="https://github.com/eduardstan/reasonsmith">github.com/eduardstan/reasonsmith</a><br>
+          <a href="report.html">conformance dossier</a>
+        </p>
+      </div>
+    </div>
+    <p class="foot-line mono">reasonsmith · audit-grade explanations · set in Newsreader</p>
+  </footer>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script type="module" src="site/js/main.js"></script>
+</body>
+</html>
