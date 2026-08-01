@@ -21,11 +21,12 @@ jobs:
 
       - name: Fetch dossier from reasonsmith main
         run: |
-          set -e
-          if curl -fsSL https://raw.githubusercontent.com/eduardstan/reasonsmith/main/docs/report.html -o report.html.new; then
-            :
-          else
-            curl -fsSL https://raw.githubusercontent.com/eduardstan/reasonsmith/main/docs/index.html -o report.html.new
+          # Only docs/report.html is canonical; it exists on main once PR #34 merges.
+          # Until then a 404 means "nothing new to publish" — do not fall back to the
+          # legacy docs/index.html, which is the pre-restyle report.
+          if ! curl -fsSL https://raw.githubusercontent.com/eduardstan/reasonsmith/main/docs/report.html -o report.html.new; then
+            echo "no canonical dossier on main yet (PR #34 pending); skipping"
+            exit 0
           fi
           if cmp -s report.html.new report.html; then
             echo "unchanged"
