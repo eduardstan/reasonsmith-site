@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 120" width="640" height="120">
+  <rect width="640" height="120" fill="#f5f4f0"/>
+  <line x1="40" y1="20" x2="600" y2="20" stroke="#1c1f25" stroke-width="1"/>
+  <line x1="40" y1="100" x2="600" y2="100" stroke="#1c1f25" stroke-width="1"/>
+  <line x1="270" y1="20" x2="270" y2="100" stroke="#2e7d5b" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="40" y="15" font-family="'Courier New', Courier, monospace" font-size="9" font-weight="700" fill="#2e7d5b" letter-spacing="1.5">LEGAL AUDIT LOG // ARTICLE 13 PROOF</text>
+  <text x="600" y="15" text-anchor="end" font-family="'Courier New', Courier, monospace" font-size="9" font-weight="700" fill="#1c1f25" letter-spacing="1">STATE: EXPOSED</text>
+  <defs>
+    <clipPath id="redact-zone">
+      <rect x="38" y="28" width="226" height="66"/>
+    </clipPath>
+  </defs>
+  <text x="40" y="83" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="64" fill="#1c1f25" letter-spacing="-0.5">reasonsmith</text>
+  <rect x="38" y="28" width="226" height="66" fill="#b71824"/>
+  <g clip-path="url(#redact-zone)">
+    <text x="40" y="83" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="64" fill="#f5f4f0" letter-spacing="-0.5">reasonsmith</text>
+  </g>
+  <rect x="38" y="28" width="226" height="66" fill="none" stroke="#2e7d5b" stroke-width="2"/>
+  <line x1="38" y1="61" x2="264" y2="61" stroke="#2e7d5b" stroke-width="1.5" stroke-dasharray="4 2"/>
+  <rect x="90" y="22" width="120" height="14" fill="#2e7d5b"/>
+  <text x="150" y="32" text-anchor="middle" font-family="'Courier New', Courier, monospace" font-size="9" font-weight="700" fill="#f5f4f0" letter-spacing="1.5">DELETED REASON</text>
+  <text x="40" y="112" font-family="'Courier New', Courier, monospace" font-size="9" font-weight="700" fill="#1c1f25" letter-spacing="1">SYSTEM_REACTION: <tspan fill="#b71824">[SUPPRESSED]</tspan></text>
+  <text x="600" y="112" text-anchor="end" font-family="'Courier New', Courier, monospace" font-size="9" font-weight="700" fill="#2e7d5b" letter-spacing="1">reasonsmith.ai</text>
+</svg>

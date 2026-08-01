@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 120" width="640" height="120" role="img" aria-label="reasonsmith">
+  <rect width="640" height="120" fill="#f5f4f0"/>
+  <g font-family="serif" font-size="76" font-weight="700">
+    <text x="32" y="88" textLength="190" lengthAdjust="spacingAndGlyphs" fill="#1c1f25">reas</text>
+    <text x="219" y="88" textLength="49" lengthAdjust="spacingAndGlyphs" fill="#2e7d5b">o</text>
+    <text x="267" y="88" textLength="340" lengthAdjust="spacingAndGlyphs" fill="#1c1f25">nsmith</text>
+  </g>
+  <path d="M28 58H211V68H28ZM276 58H612V68H276Z" fill="#b71824"/>
+  <path d="M218 58H269V68H218Z" fill="#f5f4f0"/>
+  <text x="219" y="88" textLength="49" lengthAdjust="spacingAndGlyphs" font-family="serif" font-size="76" font-weight="700" fill="#2e7d5b">o</text>
+</svg>
