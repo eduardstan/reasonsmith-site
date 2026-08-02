@@ -1,0 +1,27 @@
+name: Publish to Vercel
+
+# Vercel's Hobby plan blocks any git-triggered deployment whose commit author is
+# not the project owner, so a push authored by a collaborator - or by the dossier
+# sync bot - never reaches production. A deploy hook is initiated by the project
+# owner rather than by the git event, so it builds the branch head no matter who
+# wrote the commit.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger the Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          # Fail loudly rather than reporting a green run that published nothing.
+          if [ -z "$HOOK" ]; then
+            echo "::error::VERCEL_DEPLOY_HOOK is not set - nothing was published."
+            exit 1
+          fi
+          curl -fsS -X POST "$HOOK"
