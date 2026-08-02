@@ -2,7 +2,9 @@ name: Sync conformance dossier
 
 # Keeps report.html in step with the dossier generated in eduardstan/reasonsmith.
 # The canonical file is docs/report.html after PR #34 merges, docs/index.html before.
-# Vercel auto-deploys on every push to main, so a sync commit is also a publish.
+# A push made with the default GITHUB_TOKEN never triggers another workflow, so
+# publish.yml does not fire for a sync commit — this workflow calls the deploy
+# hook itself instead.
 
 on:
   schedule:
@@ -44,3 +46,15 @@ jobs:
           git add report.html
           git commit -m "chore: sync dossier from eduardstan/reasonsmith@main"
           git push
+
+      - name: Trigger the Vercel deploy hook
+        if: env.changed == 'true'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          # Fail loudly rather than reporting a green run that published nothing.
+          if [ -z "$HOOK" ]; then
+            echo "::error::VERCEL_DEPLOY_HOOK is not set - the synced dossier was committed but not published."
+            exit 1
+          fi
+          curl -fsS -X POST "$HOOK"
