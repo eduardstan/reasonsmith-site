@@ -214,8 +214,14 @@ main, .site-head, .colophon { position: relative; z-index: 1; }
   padding: 0.3rem 0.7rem;
 }
 .site-nav .nav-report:hover { background: var(--accent-soft); }
+.site-nav .nav-github {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink-muted);
+}
+.site-nav .nav-github:hover { color: var(--accent); }
 @media (max-width: 700px) {
-  .site-nav a:not(.nav-report) { display: none; }
+  .site-nav a:not(.nav-report):not(.nav-github) { display: none; }
 }
 
 /* ---- hero ----------------------------------------------------------------- */
