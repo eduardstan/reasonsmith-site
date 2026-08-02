@@ -4,11 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>reasonsmith — prove which legally-owed reasons a system deleted, and from whom</title>
-  <meta name="description" content="reasonsmith is an audit engine: it runs conformance checks against formal regulation packs and issues reason-deletion certificates with evidence-strength verdicts.">
-  <meta property="og:title" content="reasonsmith — audit-grade explanations">
+  <meta name="description" content="reasonsmith runs conformance checks against formal regulation packs and issues reason-deletion certificates with explicit evidence-strength verdicts.">
+  <link rel="canonical" href="https://reasonsmith.dev/">
+  <meta property="og:title" content="reasonsmith — reason-deletion certificates for decision systems">
   <meta property="og:description" content="Prove which legally-owed reasons a system deleted, and from whom. 5 reasons found · 4 deleted — ECOA / Reg B.">
-  <meta property="og:image" content="assets/og.png">
+  <meta property="og:image" content="https://reasonsmith.dev/assets/og.png">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://reasonsmith.dev/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="reasonsmith — reason-deletion certificates for decision systems">
+  <meta name="twitter:description" content="Prove which legally-owed reasons a system deleted, and from whom. Every verdict carries its evidence strength: observed, probed, proved.">
+  <meta name="twitter:image" content="https://reasonsmith.dev/assets/og.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "reasonsmith",
+    "description": "Evidence records and reason-deletion certificates for decision systems: conformance checks against formal regulation packs with explicit evidence-strength verdicts.",
+    "license": "https://opensource.org/licenses/MIT",
+    "codeRepository": "https://github.com/eduardstan/reasonsmith",
+    "programmingLanguage": "Python",
+    "author": {
+      "@type": "Person",
+      "name": "Ionel Eduard Stan"
+    }
+  }
+  </script>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/newsreader-normal.woff2" crossorigin>
   <link rel="stylesheet" href="site/css/landing.css">
@@ -20,6 +41,13 @@
       }
     }
   </script>
+  <noscript>
+    <style>
+      #gl, .progress-rail, .hero-hint { display: none; }
+      .beat, .hscroll { min-height: 0; padding: var(--space-xl) 0; }
+      .track-wrap { overflow-x: auto; }
+    </style>
+  </noscript>
 </head>
 <body>
   <canvas id="gl" aria-hidden="true"></canvas>
@@ -55,6 +83,8 @@
       <a href="#deletion">§2 Deletion</a>
       <a href="#regulations">§3 Regulations</a>
       <a href="#lattice">§4 Evidence</a>
+      <a href="#limits">§5 Limits</a>
+      <a href="#run">§6 Run</a>
       <a href="report.html" class="nav-report">Report</a>
     </nav>
   </header>
@@ -67,7 +97,7 @@
         <p class="abstract-label">Abstract</p>
         <p>
           reasonsmith runs conformance checks against formal regulation packs and issues
-          <strong>reason-deletion certificates</strong>: audit-grade evidence that an explanation
+          <strong>reason-deletion certificates</strong>: evidence records showing that an explanation
           engine dropped reasons the law says a person is owed. Every claim carries a strength on an
           explicit lattice &mdash; <span class="mono">observed &rarr; probed &rarr; proved</span> &mdash;
           and nothing claims a strength it did not earn.
@@ -174,8 +204,12 @@
           Every requirement verdict carries its position on the evidence lattice.
           <span class="mono">unattainable</span> means the system as built cannot emit the signals at all;
           <span class="mono">observed</span> means the trace carries them;
-          <span class="mono">probed</span> and <span class="mono">proved</span> mean the engines went further.
-          Zero verdicts combine to <em>inconclusive</em>, never to satisfied.
+          <span class="mono">probed</span> is a real engine &mdash; bounded falsification against the
+          system&rsquo;s own <code>decide()</code> &mdash; and <span class="mono">proved</span> is a solver
+          result, with GDPR Article&nbsp;22 machine-checked over every input the constraints admit,
+          and a verified counterexample when it fails, as its
+          first requirement against real statute. Zero verdicts combine to <em>inconclusive</em>, never
+          to satisfied.
         </p>
         <div class="lattice-strip mono" aria-label="Evidence strength lattice">
           <span class="ls-step ls-unattainable">unattainable</span><span class="ls-arrow">&rarr;</span>
@@ -183,10 +217,74 @@
           <span class="ls-step ls-probed">probed</span><span class="ls-arrow">&rarr;</span>
           <span class="ls-step ls-proved">proved</span>
         </div>
+        <p class="beat-copy">
+          A probed verdict cannot be rendered without its search budget &mdash; that is enforced at
+          construction, not by convention. This is a real one:
+        </p>
+        <pre class="terminal mono">[PROBED] income &gt;= 30000 implies approved == True: satisfied
+probe budget: 200 input(s) replayed, seed 0,
+input space: age (14 values), approved (2 values),
+income (11 values), reason (3 values).
+Strategy: seeded random perturbation of one recorded
+decision, one or two fields replaced from that field&rsquo;s
+candidate pool.</pre>
+        <p class="beat-copy">
+          What each verdict claims and what it does not, one engine at a time, with the test that
+          fails if a soundness claim becomes false:
+          <a href="https://github.com/eduardstan/reasonsmith/blob/main/docs/semantics.md">docs/semantics.md</a>.
+        </p>
         <p class="report-cta">
           <a class="report-link" href="report.html">
             Read the full conformance dossier
             <span class="mono">report.html &rarr;</span>
+          </a>
+        </p>
+      </div>
+    </section>
+
+    <section class="beat" id="limits">
+      <div class="beat-inner">
+        <p class="beat-index mono">§5 — The limits</p>
+        <h2>What this <span class="accent">doesn&rsquo;t</span> catch.</h2>
+        <p class="beat-copy">
+          We pointed reasonsmith at five real neuro-symbolic systems &mdash;
+          <a href="https://github.com/eduardstan/nesyarena">nesyarena</a>&rsquo;s provenance semantics,
+          16 ground programs &mdash; and it <strong>cleared two systems whose decisions are wrong</strong>.
+          <code>top-1-proofs</code> denies eight applicants that the semantics it claims would approve,
+          and every duty the packs could check came back satisfied, identical to the exact oracle.
+        </p>
+        <p class="beat-copy">
+          It is right to, and that is the point: every record duty asks whether a field is
+          <em>present</em>, never whether the number it explains is the number the system claims to
+          compute. Read a satisfied verdict as <em>the record has the fields</em> &mdash; not
+          <em>the system computes what it says it computes</em>.
+        </p>
+        <p class="beat-copy">
+          Full account, unflattering half first:
+          <a href="https://github.com/eduardstan/reasonsmith/blob/main/docs/findings-nesyarena.md">docs/findings-nesyarena.md</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="beat" id="run">
+      <div class="beat-inner">
+        <p class="beat-index mono">§6 — Run it</p>
+        <h2>On your own decision log.</h2>
+        <pre class="terminal mono">pip install reasonsmith
+reasonsmith check --system decisions.jsonl --pack gdpr --html report.html</pre>
+        <p class="beat-copy">
+          Four packs ship: GDPR, ECOA&nbsp;/&nbsp;Reg&nbsp;B, EU AI Act, and the review paper&rsquo;s
+          Table&nbsp;7. Every quoted statute in them is re-verified against the live official sources
+          (EUR-Lex Cellar, eCFR) monthly, in CI, opening an issue on any difference.
+        </p>
+        <p class="values-bar mono">
+          <span>Statutory quotes last verified 2 August 2026</span>
+          <span>11 quotes &middot; 11 matches</span>
+        </p>
+        <p class="report-cta">
+          <a class="report-link" href="https://github.com/eduardstan/reasonsmith">
+            Source, packs and authoring guide
+            <span class="mono">github.com/eduardstan/reasonsmith &rarr;</span>
           </a>
         </p>
       </div>
@@ -218,7 +316,7 @@
         </p>
       </div>
     </div>
-    <p class="foot-line mono">reasonsmith · audit-grade explanations · set in Newsreader</p>
+    <p class="foot-line mono">reasonsmith · reason-deletion certificates · set in Newsreader</p>
   </footer>
 
   <script src="vendor/gsap.min.js"></script>
