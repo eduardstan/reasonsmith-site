@@ -1,7 +1,9 @@
 name: Sync conformance dossier
 
-# Keeps report.html in step with the dossier generated in eduardstan/reasonsmith.
-# The canonical file is docs/report.html after PR #34 merges, docs/index.html before.
+# Keeps the generated pages in step with the ones built in eduardstan/reasonsmith:
+# report.html (one run, one reader) and audiences.html (one run rendered for all five
+# audiences). Both are generated there and pinned byte-for-byte by tests there, so this
+# workflow copies them and never edits them.
 # A push made with the default GITHUB_TOKEN never triggers another workflow, so
 # publish.yml does not fire for a sync commit — this workflow calls the deploy
 # hook itself instead.
@@ -21,30 +23,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Fetch dossier from reasonsmith main
+      - name: Fetch the generated pages from reasonsmith main
         run: |
-          # Only docs/report.html is canonical; it exists on main once PR #34 merges.
-          # Until then a 404 means "nothing new to publish" — do not fall back to the
-          # legacy docs/index.html, which is the pre-restyle report.
-          if ! curl -fsSL https://raw.githubusercontent.com/eduardstan/reasonsmith/main/docs/report.html -o report.html.new; then
-            echo "no canonical dossier on main yet (PR #34 pending); skipping"
-            exit 0
-          fi
-          if cmp -s report.html.new report.html; then
-            echo "unchanged"
-            rm report.html.new
-          else
-            mv report.html.new report.html
-            echo "changed=true" >> "$GITHUB_ENV"
-          fi
+          # A 404 means "not on main yet" and is not a failure — audiences.html lands after
+          # report.html did. A page that is missing upstream leaves the published one alone
+          # rather than aborting the sync of the other.
+          for page in report.html audiences.html; do
+            if ! curl -fsSL "https://raw.githubusercontent.com/eduardstan/reasonsmith/main/docs/$page" -o "$page.new"; then
+              echo "$page is not on main yet; skipping it"
+              rm -f "$page.new"
+              continue
+            fi
+            if cmp -s "$page.new" "$page"; then
+              echo "$page unchanged"
+              rm "$page.new"
+            else
+              mv "$page.new" "$page"
+              echo "$page changed"
+              echo "changed=true" >> "$GITHUB_ENV"
+            fi
+          done
 
       - name: Commit and push if changed
         if: env.changed == 'true'
         run: |
           git config user.name "reasonsmith-site bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add report.html
-          git commit -m "chore: sync dossier from eduardstan/reasonsmith@main"
+          for page in report.html audiences.html; do
+            if [ -f "$page" ]; then git add "$page"; fi
+          done
+          git commit -m "chore: sync generated pages from eduardstan/reasonsmith@main"
           git push
 
       - name: Trigger the Vercel deploy hook
@@ -54,7 +62,7 @@ jobs:
         run: |
           # Fail loudly rather than reporting a green run that published nothing.
           if [ -z "$HOOK" ]; then
-            echo "::error::VERCEL_DEPLOY_HOOK is not set - the synced dossier was committed but not published."
+            echo "::error::VERCEL_DEPLOY_HOOK is not set - the synced pages were committed but not published."
             exit 1
           fi
           curl -fsS -X POST "$HOOK"
