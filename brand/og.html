@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--
+  reasonsmith social card — the source for assets/og.png (OpenGraph + Twitter
+  summary_large_image, referenced from index.html).
+
+  assets/og.png is GENERATED FROM THIS FILE. Do not edit the PNG: edit this
+  page and re-render it.
+
+      chrome-devtools-axi resize 1200 630
+      chrome-devtools-axi open "file://$PWD/brand/og.html"
+      chrome-devtools-axi screenshot /tmp/og-render.png
+      cp /tmp/og-render.png assets/og.png
+
+  (chrome-devtools-axi only writes screenshots under /tmp, hence the copy.)
+
+  Viewport is exactly 1200x630 — the OpenGraph size the card is served at.
+  Type, colour and spacing come from the site itself (site/css/landing.css);
+  only the card-specific layout lives below. The mono sizes are tuned for the
+  fallback that --font-mono resolves to on the render box, so re-check the
+  monospace runs against the committed PNG if you render somewhere new.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>reasonsmith — social card 1200×630</title>
+<link rel="stylesheet" href="../site/css/landing.css">
+<style>
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body { background: var(--paper); color: var(--ink); }
+
+  .card { position: relative; width: 1200px; height: 630px; }
+
+  /* double rule frame */
+  .card::before, .card::after {
+    content: ""; position: absolute; pointer-events: none;
+  }
+  .card::before { inset: 24px; border: 1px solid rgba(28, 31, 37, 0.35); }
+  .card::after  { inset: 30px; border: 1px solid rgba(28, 31, 37, 0.143); }
+
+  .eyebrow, .footer {
+    position: absolute; display: flex; justify-content: space-between;
+    font-family: var(--font-mono);
+    color: var(--ink-muted);
+    line-height: 1;
+  }
+  .eyebrow {
+    left: 52px; right: 52px; top: 44px;
+    font-size: 14px; letter-spacing: 0.134em;
+  }
+  .footer {
+    left: 96px; right: 96px; top: 559px;
+    font-size: 13px; letter-spacing: 0.158em;
+  }
+
+  .headline {
+    position: absolute; left: 96px; top: 178px;
+    font-family: var(--font-serif);
+    font-size: 67px; font-weight: 400; line-height: 73px;
+    letter-spacing: -0.01em;
+  }
+  .headline .struck { position: relative; color: var(--ink-muted); }
+  .headline .struck::after {
+    content: ""; position: absolute; left: 2px; right: -7px; top: calc(50% - 5px);
+    height: 6px; background: var(--accent); transform: rotate(-2deg);
+  }
+
+  .subline {
+    position: absolute; left: 96px; top: 353px;
+    font-family: var(--font-mono); font-size: 18px; line-height: 1;
+    letter-spacing: 0.057em;
+    color: var(--ink-muted);
+  }
+  .subline .n { color: var(--accent); font-weight: 700; }
+
+  .chips {
+    position: absolute; left: 96px; top: 403px;
+    display: flex; gap: 12px;
+    font-family: var(--font-mono); font-size: 12px; line-height: 1;
+  }
+  .chip {
+    position: relative; padding: 11.5px 14px;
+    letter-spacing: 0.19em;
+  }
+  /* chip greens/reds are sampled from the card itself — they are a shade off
+     the --ok-*/--accent-* tokens the landing page uses for reason rows. */
+  .chip.used {
+    background: #dfe9e0; border: 1px solid #89b096; color: #07502c;
+  }
+  .chip.gone {
+    background: #f0e4e2; border: 1px solid #d7888c; color: var(--accent);
+  }
+  .chip.gone::after {
+    content: ""; position: absolute; left: 5px; right: 5px; top: 50%;
+    height: 3px; background: var(--accent); transform: rotate(-3deg);
+  }
+
+  .rule {
+    position: absolute; left: 96px; top: 543px; width: 1008px; height: 1px;
+    background: rgba(28, 31, 37, 0.305);
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="eyebrow"><span>REASONSMITH AUDIT ENGINE</span><span>DOSSIER / APP-1042</span></div>
+
+  <h1 class="headline">Prove which legally-owed<br>reasons a system <span class="struck">deleted</span>.</h1>
+
+  <p class="subline">5 reasons found · <span class="n">4 deleted</span> — ECOA / Reg B · adverse_action(APP-1042)</p>
+
+  <div class="chips">
+    <span class="chip used">[used] C01</span>
+    <span class="chip gone">[DELETED] C02</span>
+    <span class="chip gone">[DELETED] C03</span>
+    <span class="chip gone">[DELETED] C04</span>
+    <span class="chip gone">[DELETED] C05</span>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="footer"><span>reasonsmith.dev</span><span>EXHIBIT A — STRIKE REPORT</span></div>
+</div>
+</body>
+</html>
