@@ -322,6 +322,14 @@ main, .site-head, .colophon { position: relative; z-index: 1; }
   text-wrap: pretty;
   margin-bottom: var(--space-m);
 }
+/* Body links carried the UA default blue, the one colour outside the palette. Same accent as
+   the footer links, underlined off the baseline so it still reads as a link in running text. */
+.beat-copy a {
+  color: var(--accent-deep);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+.beat-copy a:hover { color: var(--accent); }
 
 .case-meta {
   display: grid;
@@ -490,6 +498,11 @@ main, .site-head, .colophon { position: relative; z-index: 1; }
   margin: var(--space-m) 0;
   font-size: var(--step--1);
 }
+.ls-rung {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
 .ls-step {
   padding: 0.25rem 0.7rem;
   border-radius: 4px;
@@ -498,6 +511,9 @@ main, .site-head, .colophon { position: relative; z-index: 1; }
   background: var(--surface);
 }
 .ls-observed { background: var(--ok); border-color: var(--ok); color: var(--surface); font-weight: 700; }
+/* recounted is a rung the engine reaches but a system's own account earns: solid like the rungs
+   either side, ink-on-paper rather than filled, so it reads as ranked and not as a caveat. */
+.ls-recounted { border-color: var(--line-strong); color: var(--ink); font-weight: 700; }
 .ls-probed { background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 700; }
 .ls-proved { background: var(--ink); border-color: var(--ink); color: var(--surface); font-weight: 700; }
 .ls-unattainable { border-style: dashed; color: var(--accent-deep); border-color: var(--accent-line); }

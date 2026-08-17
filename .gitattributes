@@ -1,0 +1,4 @@
+# report.html and audiences.html are generated in eduardstan/reasonsmith and pinned there
+# byte-for-byte by that repo's tests. A CRLF checkout committed back from Windows would make
+# every hourly sync see a difference, so line endings are LF in the repository on every platform.
+* text=auto eol=lf

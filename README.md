@@ -1,15 +1,21 @@
 # reasonsmith-site
 
-The reasonsmith website: a WebGL proof-graph flight (`index.html`) and the generated
-conformance dossier (`report.html`). Deploys to Vercel.
+The reasonsmith website: a WebGL proof-graph flight (`index.html`), the generated
+conformance dossier (`report.html`), and that same run projected for its five readers
+(`audiences.html`). Deploys to Vercel.
 
 - `index.html`, `site/`, `vendor/`, `assets/` — hand-authored here. Edit directly.
-- `report.html` — **generated, never hand-edited.** It is produced by
-  `python docs/build_example.py` in [eduardstan/reasonsmith](https://github.com/eduardstan/reasonsmith)
-  and held byte-for-byte to `render_html()` by that repo's test suite. Update it by
-  copying a freshly built file from there.
+- `report.html`, `audiences.html` — **generated, never hand-edited.** They are produced by
+  `python docs/build_example.py` and `python docs/build_audiences.py` in
+  [eduardstan/reasonsmith](https://github.com/eduardstan/reasonsmith) and held byte-for-byte
+  to `render_html()` by that repo's test suite. `.github/workflows/sync-dossier.yml` copies
+  both from that repo's `main` hourly and triggers the deploy hook; a page missing upstream
+  is skipped rather than aborting the sync of the other. Do not edit them here — a hand edit
+  is overwritten by the next sync.
 - `vendor/` — pinned Three.js r180 (+ core), GSAP 3.13 + ScrollTrigger, Lenis. No CDN,
   no build step: the site is plain static files.
+- `.gitattributes` pins LF on every platform: the generated pages are compared byte-for-byte
+  against the upstream build, and a CRLF checkout committed from Windows would break that.
 
 Deploy: `vercel --prod` (project linked to Vercel account `sandrohub013`).
 

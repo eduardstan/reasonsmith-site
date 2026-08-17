@@ -13,7 +13,7 @@
   <meta property="og:url" content="https://reasonsmith.dev/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="reasonsmith — reason-deletion certificates for decision systems">
-  <meta name="twitter:description" content="Prove which legally-owed reasons a system deleted, and from whom. Every verdict carries its evidence strength: observed, probed, proved.">
+  <meta name="twitter:description" content="Prove which legally-owed reasons a system deleted, and from whom. Every verdict carries its evidence strength: unattainable, observed, recounted, probed, proved.">
   <meta name="twitter:image" content="https://reasonsmith.dev/assets/og.png">
   <script type="application/ld+json">
   {
@@ -85,6 +85,7 @@
       <a href="#lattice">§4 Evidence</a>
       <a href="#limits">§5 Limits</a>
       <a href="#run">§6 Run</a>
+      <a href="audiences.html">Audiences</a>
       <a href="report.html" class="nav-report">Report</a>
       <a href="https://github.com/eduardstan/reasonsmith" class="nav-github" aria-label="reasonsmith on GitHub" target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true">
@@ -104,8 +105,9 @@
           reasonsmith runs conformance checks against formal regulation packs and issues
           <strong>reason-deletion certificates</strong>: evidence records showing that an explanation
           engine dropped reasons the law says a person is owed. Every claim carries a strength on an
-          explicit lattice &mdash; <span class="mono">observed &rarr; probed &rarr; proved</span> &mdash;
-          and nothing claims a strength it did not earn.
+          explicit five-rung lattice &mdash;
+          <span class="mono">unattainable &rarr; observed &rarr; recounted &rarr; probed &rarr; proved</span>
+          &mdash; and nothing claims a strength it did not earn.
         </p>
       </div>
       <p class="hero-hint mono" aria-hidden="true">scroll &mdash; the flight is the argument &darr;</p>
@@ -157,7 +159,7 @@
     <section class="hscroll" id="regulations">
       <div class="hscroll-head">
         <p class="beat-index mono">§3 — The duties</p>
-        <h2>Six regulations, one engine.</h2>
+        <h2>Seven regulations, one engine.</h2>
       </div>
       <div class="track-wrap">
         <div class="track" id="track">
@@ -187,12 +189,20 @@
           </article>
           <article class="panel">
             <p class="panel-no mono">05</p>
+            <h3>EU AI Act Arts. 53 &amp; 55</h3>
+            <p class="panel-law mono">general-purpose AI models · systemic risk</p>
+            <p>Provider duties for a GPAI model: technical and downstream documentation, copyright
+              policy, training-content summary, and — above the systemic-risk threshold — evaluation,
+              risk assessment, incident reporting and cybersecurity.</p>
+          </article>
+          <article class="panel">
+            <p class="panel-no mono">06</p>
             <h3>FDA GMLP</h3>
             <p class="panel-law mono">SaMD · good machine learning practice</p>
             <p>Design history, verification logs and change control for software as a medical device.</p>
           </article>
           <article class="panel">
-            <p class="panel-no mono">06</p>
+            <p class="panel-no mono">07</p>
             <h3>NIST AI RMF 1.0</h3>
             <p class="panel-law mono">continuous monitoring</p>
             <p>Monitoring logs, thresholds, reviews and incident tickets as ongoing evidence, not one-off attestations.</p>
@@ -216,11 +226,21 @@
           first requirement against real statute. Zero verdicts combine to <em>inconclusive</em>, never
           to satisfied.
         </p>
+        <p class="beat-copy">
+          Between observed and probed sits <span class="mono">recounted</span>: the same deletion probe,
+          run over a reason set the system <em>recounted</em> about its own inference rather than one
+          enumerated exactly from a model encoding. Nothing here can check a system&rsquo;s account of
+          itself as hard as an enumeration, so a certificate built on one is refused the rung above &mdash;
+          at construction, not by convention.
+        </p>
+        <!-- Each arrow is bound to the rung it points at, so a wrap breaks between rungs and never
+             leaves a dangling arrow at the end of a line. -->
         <div class="lattice-strip mono" aria-label="Evidence strength lattice">
-          <span class="ls-step ls-unattainable">unattainable</span><span class="ls-arrow">&rarr;</span>
-          <span class="ls-step ls-observed">observed</span><span class="ls-arrow">&rarr;</span>
-          <span class="ls-step ls-probed">probed</span><span class="ls-arrow">&rarr;</span>
-          <span class="ls-step ls-proved">proved</span>
+          <span class="ls-rung"><span class="ls-step ls-unattainable">unattainable</span></span>
+          <span class="ls-rung"><span class="ls-arrow">&rarr;</span><span class="ls-step ls-observed">observed</span></span>
+          <span class="ls-rung"><span class="ls-arrow">&rarr;</span><span class="ls-step ls-recounted">recounted</span></span>
+          <span class="ls-rung"><span class="ls-arrow">&rarr;</span><span class="ls-step ls-probed">probed</span></span>
+          <span class="ls-rung"><span class="ls-arrow">&rarr;</span><span class="ls-step ls-proved">proved</span></span>
         </div>
         <p class="beat-copy">
           A probed verdict cannot be rendered without its search budget &mdash; that is enforced at
@@ -279,13 +299,20 @@ candidate pool.</pre>
 reasonsmith check --system decisions.jsonl --pack gdpr --html report.html</pre>
         <p class="beat-copy">
           <span data-count="pack_count" data-value="5">Five</span> packs ship: GDPR,
-          ECOA&nbsp;/&nbsp;Reg&nbsp;B, EU AI Act, GPAI (Art.&nbsp;53 &amp; 55), and the review
-          paper&rsquo;s Table&nbsp;7. Every quoted statute in them is re-verified against the live
-          official sources (EUR-Lex Cellar, eCFR) monthly, in CI, opening an issue on any difference.
+          ECOA&nbsp;/&nbsp;Reg&nbsp;B, EU AI Act (Arts.&nbsp;12 &amp;&nbsp;13), EU AI Act GPAI
+          (Arts.&nbsp;53 &amp;&nbsp;55), and the review paper&rsquo;s Table&nbsp;7. Every quoted
+          statute in the four statutory packs is re-verified against the live official sources
+          (EUR-Lex Cellar, eCFR) monthly, in CI, opening an issue on any difference.
         </p>
         <p class="values-bar mono">
           <span><span data-count="quote_count" data-value="23">23</span> quoted requirements</span>
           <span data-count="quotes_verification" data-value="not_run">No verification run recorded</span>
+        </p>
+        <p class="beat-copy">
+          One run does not read the same to everyone. <code>--audience</code> projects it for five
+          readers &mdash; affected individual, deployer, developer, auditor, regulator &mdash; without
+          changing a verdict or a strength. The same run rendered all five ways:
+          <a href="audiences.html">audiences.html</a>.
         </p>
         <p class="report-cta">
           <a class="report-link" href="https://github.com/eduardstan/reasonsmith">
@@ -318,7 +345,8 @@ reasonsmith check --system decisions.jsonl --pack gdpr --html report.html</pre>
         <p class="foot-label mono">Source</p>
         <p class="foot-copy">
           <a href="https://github.com/eduardstan/reasonsmith">github.com/eduardstan/reasonsmith</a><br>
-          <a href="report.html">conformance dossier</a>
+          <a href="report.html">conformance dossier</a><br>
+          <a href="audiences.html">the same run, five readers</a>
         </p>
       </div>
     </div>
