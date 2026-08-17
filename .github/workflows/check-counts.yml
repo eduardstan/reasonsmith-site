@@ -1,0 +1,61 @@
+name: Check published counts
+
+# The hand-authored pages state numbers this site does not derive: how many packs ship, how many
+# quoted requirements they carry, whether a statutory verification run has been recorded. Those are
+# computed in eduardstan/reasonsmith by `reasonsmith.published_counts` and published as
+# docs/published-counts.json, whose module docstring says it exists for this site. Nothing read it,
+# so the numbers rotted: the page claimed four packs against five, eleven quotes against
+# twenty-three, and a verification date the tree records as never run.
+#
+# This job reads the artefact and holds every `data-count` on the page to it. `sync-dossier.yml`
+# copies the generated pages; this one keeps the hand-authored claims honest, which is the half a
+# copy cannot do.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "43 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  counts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Hold every data-count claim to the published artefact
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/eduardstan/reasonsmith/main/docs/published-counts.json -o published-counts.json
+          python3 - <<'PY'
+          import json
+          import re
+          import sys
+
+          counts = json.load(open("published-counts.json", encoding="utf-8"))
+          page = open("index.html", encoding="utf-8").read()
+
+          # A claim on the page is marked `data-count="<key>" data-value="<what the tree says>"`.
+          # The visible text is the author's wording and is never compared; the value is.
+          claimed = re.findall(r'data-count="([^"]+)"\s+data-value="([^"]*)"', page)
+          if not claimed:
+              sys.exit("no data-count claims found in index.html — the markup lost its markers")
+
+          def expected(key):
+              if key == "quotes_verification":
+                  return str(counts["quotes_verification"]["status"])
+              if key not in counts:
+                  sys.exit(f"index.html claims {key!r}, which published-counts.json does not carry")
+              value = counts[key]
+              return "" if value is None else str(value)
+
+          wrong = [(k, v, expected(k)) for k, v in claimed if v != expected(k)]
+          for key, page_value, tree_value in wrong:
+              print(f"{key}: page says {page_value!r}, the tree says {tree_value!r}")
+          print(f"\n{len(claimed) - len(wrong)}/{len(claimed)} claims match")
+          if wrong:
+              sys.exit(1)
+          PY
